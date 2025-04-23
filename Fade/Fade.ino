@@ -13,41 +13,43 @@
   https://docs.arduino.cc/built-in-examples/basics/Fade/
 */
 
-int blueLed = 9;
-int redLed = 10;
-int greenLed = 11;
-int yellowLed = 12;
-int whiteLed = 13;
+int leds[] = {9, 10, 11, 12, 13};  // LED pins
+int numLeds = 5;
+
 int brightness = 0;
 int fadeAmount = 3;
 
+int currentLed = 0;
+bool fadingIn = true;
+
 void setup() {
-  pinMode(blueLed, OUTPUT);
-  pinMode(redLed, OUTPUT);
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(leds[i], OUTPUT);
+    analogWrite(leds[i], 0);  // make sure all LEDs start off
+  }
 }
 
 void loop() {
-  // blue LED fades in
-  analogWrite(blueLed, brightness);
+  // Set brightness to current LED
+  analogWrite(leds[currentLed], brightness);
 
-  // red LED fades out (inversely)
-  analogWrite(redLed, 255 - brightness);
+  // Update brightness
+  if (fadingIn) {
+    brightness += fadeAmount;
+    if (brightness >= 255) {
+      brightness = 255;
+      fadingIn = false;
+    }
+  } else {
+    brightness -= fadeAmount;
+    if (brightness <= 0) {
+      brightness = 0;
+      fadingIn = true;
 
-  // green LED fades out (inversely)
-  analogWrite(greenLed, brightness);
-
-  // yellow LED fades out (inversely)
-  analogWrite(yellowLed, 255 - brightness);
-
-  // red LED fades out (inversely)
-  analogWrite(whiteLed, brightness);
-
-  // update brightness
-  brightness = brightness + fadeAmount;
-
-  // reverse direction at limits
-  if (brightness <= 0 || brightness >= 255) {
-    fadeAmount = -fadeAmount;
+      // Move to next LED
+      analogWrite(leds[currentLed], 0);  // make sure it's fully off
+      currentLed = (currentLed + 1) % numLeds;
+    }
   }
 
   delay(30);
