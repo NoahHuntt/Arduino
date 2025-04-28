@@ -28,9 +28,9 @@ void loop() {
   
   lcd.setCursor(0, 1);  // Set cursor to second row, first column
   lcd.print("Temp=");
-  lcd.print(dht.readTemperature()); // Print temperature
+  lcd.print(dht.readTemperature(true)); // Print temperature
   lcd.print((char)223); // Print degree symbol
-  lcd.print("C");
+  lcd.print("F");
 
   delay(2000); // Wait 2 seconds before updating again
 }
